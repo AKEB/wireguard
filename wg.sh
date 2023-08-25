@@ -12,7 +12,7 @@ CONF=$(dirname $0)/wireguard.conf
 
 [ $# -ge 1 ] || { echo "Usage: $0 | add [<users>] | del <users>"; exit 2 ; }
 
-VARS="PEERS TELEGRAM_BOT_TOKEN TELEGRAM_USER_ID"
+VARS="PEERS TELEGRAM_BOT_TOKEN TELEGRAM_USER_ID DOCKER_COMPOSE_FILE TZ SERVERURL SERVERPORT INTERNAL_SUBNET ALLOWEDIPS"
 for VAR in $VARS ; do if [ "${!VAR:-undefined}" = "undefined" ] ; then echo "$VAR is empty or undefined "; exit ; fi ; done
 
 DOCKER_COMPOSE="docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${PWD}/wireguard.conf "
@@ -56,7 +56,7 @@ function send_users() {
         do
             if [ -d "${PWD}/config/peer_${!argN}/" ]; then
                 {
-                    telegram_text_send "WireGuard config for user ${!argN}"
+                    telegram_text_send "WireGuard config for user ${!argN} in server ${SERVERURL}"
                     telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.conf"
                     telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.png"
                 } &> /dev/null
