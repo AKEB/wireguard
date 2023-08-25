@@ -37,7 +37,10 @@ function show_users() {
         argN=1;
         while [ $argN -le $# ] ;
         do
-            ${DOCKER_COMPOSE} exec wireguard /app/show-peer ${!argN}
+            if [ -d "${PWD}/config/peer_${!argN}/" ]; then
+                ${DOCKER_COMPOSE} exec wireguard /app/show-peer ${!argN}
+            else echo "Peer ${!argN} doesn't exist!";
+            fi
             argN=$((argN+1)) ;
         done ;
     else echo "USE show <user1> <user2> <user3>" ;
@@ -51,11 +54,14 @@ function send_users() {
         argN=1;
         while [ $argN -le $# ] ;
         do
-            {
-                telegram_text_send "WireGuard config for user ${!argN}"
-                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.conf"
-                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.png"
-            } &> /dev/null
+            if [ -d "${PWD}/config/peer_${!argN}/" ]; then
+                {
+                    telegram_text_send "WireGuard config for user ${!argN}"
+                    telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.conf"
+                    telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.png"
+                } &> /dev/null
+            else echo "Peer ${!argN} doesn't exist!";
+            fi
             argN=$((argN+1)) ;
         done ;
     else echo "USE send <user1> <user2> <user3>" ;
