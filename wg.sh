@@ -30,6 +30,38 @@ function telegram_text_send() {
     curl -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_USER_ID} -d text="${1}"
 }
 
+function show_users() {
+    echo "Show users:" $*
+    if [ $# -gt 0 ] ;
+    then
+        argN=1;
+        while [ $argN -le $# ] ;
+        do
+            ${DOCKER_COMPOSE} exec wireguard /app/show-peer ${!argN}
+            argN=$((argN+1)) ;
+        done ;
+    else echo "USE show <user1> <user2> <user3>" ;
+    fi
+}
+
+function send_users() {
+    echo "Send users:" $*
+    if [ $# -gt 0 ] ;
+    then
+        argN=1;
+        while [ $argN -le $# ] ;
+        do
+            {
+                telegram_text_send "WireGuard config for user ${!argN}"
+                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.conf"
+                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.png"
+            } &> /dev/null
+            argN=$((argN+1)) ;
+        done ;
+    else echo "USE send <user1> <user2> <user3>" ;
+    fi
+}
+
 function add_users() {
     echo "Add users:" $*
     if [ $# -gt 0 ] ;
@@ -46,47 +78,36 @@ function add_users() {
 
         ${DOCKER_COMPOSE} up -d --force-recreate
         sleep 5;
-        argN=1;
-        while [ $argN -le $# ] ;
-        do
-            ${DOCKER_COMPOSE} exec wireguard /app/show-peer ${!argN}
-            argN=$((argN+1)) ;
-        done ;
-        argN=1;
-        while [ $argN -le $# ] ;
-        do
-            {
-                telegram_text_send "WireGuard config for user ${!argN}"
-                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.conf"
-                telegram_file_send "${PWD}/config/peer_${!argN}/peer_${!argN}.png"
-            } &> /dev/null
-            argN=$((argN+1)) ;
-        done ;
-
-
+        show_users $*;
+        send_users $*;
     else echo "USE add <user1> <user2> <user3>" ;
     fi
 }
 
 function del_users() {
     echo "Delete users:" $*
-    argN=1;
-    while [ $argN -le $# ] ;
-    do
-        rm -rf "${PWD}/config/peer_${!argN}/"
-        argN=$((argN+1)) ;
-    done ;
-    PEERS_OLD=$(echo "${PEERS}" | tr ',' '\n')
-    PEERS=""
-    for VAR in ${PEERS_OLD} ; do
-        if [[ ! " $* " =~ " ${VAR} " ]]; then
-            PEERS="${PEERS},${VAR}";
-        fi
-    done
-    PEERS=${PEERS:1:(${#PEERS})}
-    echo "PEERS=${PEERS}" > .env
-    ${DOCKER_COMPOSE} up -d --force-recreate
+    if [ $# -gt 0 ] ;
+    then
+        argN=1;
+        while [ $argN -le $# ] ;
+        do
+            rm -rf "${PWD}/config/peer_${!argN}/"
+            argN=$((argN+1)) ;
+        done ;
+        PEERS_OLD=$(echo "${PEERS}" | tr ',' '\n')
+        PEERS=""
+        for VAR in ${PEERS_OLD} ; do
+            if [[ ! " $* " =~ " ${VAR} " ]]; then
+                PEERS="${PEERS},${VAR}";
+            fi
+        done
+        PEERS=${PEERS:1:(${#PEERS})}
+        echo "PEERS=${PEERS}" > .env
+        ${DOCKER_COMPOSE} up -d --force-recreate
+    else echo "USE del <user1> <user2> <user3>" ;
+    fi
 }
+
 
 function start() {
     echo "Starting WireGuard"
@@ -111,15 +132,12 @@ function stat() {
     ${DOCKER_COMPOSE} exec wireguard wg show
 }
 
-function test() {
-    argN=1
-    while [ $argN -le $# ] ; do string=${!argN} ; echo "${!argN/\\/}" ; argN=$((argN+1)) ; done ;
-}
 
 case $CMD in
     "add") add_users ${USERLIST} ;;
     "del") del_users ${USERLIST} ;;
-    "test") test ${USERLIST} ;;
+    "show") show_users ${USERLIST} ;;
+    "send") send_users ${USERLIST} ;;
     "start") start ;;
     "stop") stop ;;
     "restart") restart ;;
