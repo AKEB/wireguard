@@ -74,7 +74,7 @@ async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Display a help message"""
-    await update.message.reply_text("Use /add <user1> <user2>, /del <user1> <user2>, /stat, /send <user1> <user2>.")
+    await update.message.reply_text("Use /add <user1> <user2>, /del <user1> <user2>, /send <user1> <user2>, /stat, /users.")
 
 
 async def add_users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
