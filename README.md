@@ -23,7 +23,7 @@
 ```bash
 python3 -m venv venv
 source ./venv/bin/activate
-pip install --no-cache-dir -r requirements.txt
+pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org python-telegram-bot python-dotenv
 
 nohup python bot.py &
 ```

@@ -9,10 +9,11 @@ one the user sends the bot
 """
 import logging
 from telegram import __version__ as TG_VER
-from dotenv import get_variable
+from dotenv import load_dotenv
 import os
 import subprocess
 
+load_dotenv(".env")
 
 try:
     from telegram import __version_info__
@@ -45,7 +46,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-ADMIN_TELEGRAM_ID = get_variable('.env', 'TELEGRAM_USER_ID')
+ADMIN_TELEGRAM_ID = os.getenv('TELEGRAM_USER_ID')
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -119,7 +120,7 @@ async def stat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(get_variable('.env', 'TELEGRAM_BOT_TOKEN')).build()
+    application = Application.builder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("add", add_users))
     application.add_handler(CommandHandler("del", del_users))
