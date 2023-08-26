@@ -2,6 +2,7 @@ version: "2.1"
 services:
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
+    privileged: true
     container_name: wireguard
     cap_add:
       - NET_ADMIN
