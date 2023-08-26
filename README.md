@@ -17,3 +17,10 @@
 * Remove peers ```./wg.sh del <user2> <user3>```
 * Show peers ```./wg.sh show <user2> <user3>```
 * Send peers to telegram ```./wg.sh send <user2> <user3>```
+
+```
+PreUp = 
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth+ -j MASQUERADE
+PreDown = 
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth+ -j MASQUERADE
+```
