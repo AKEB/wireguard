@@ -8,16 +8,11 @@ services:
       - SYS_MODULE
     env_file:
        - ${PWD}/.env
+       - ${PWD}/wireguard.conf
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
-      - SERVERURL=${SERVERURL}
-      - SERVERPORT=${SERVERPORT}
       - PEERDNS=auto
-      - INTERNAL_SUBNET=${INTERNAL_SUBNET}
-      - ALLOWEDIPS=${ALLOWEDIPS}
-      - PERSISTENTKEEPALIVE_PEERS=
       - LOG_CONFS=true
     volumes:
       - ${PWD}/config:/config

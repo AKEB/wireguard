@@ -1,10 +1,1 @@
-TELEGRAM_BOT_TOKEN=30*****76:AAG3e********************JnQuQ
-TELEGRAM_USER_ID=16******29
-
-DOCKER_COMPOSE_FILE=docker-compose.file
-TZ=Europe/Moscow
-
-SERVERURL=vpn.example.com
-SERVERPORT=51820
-INTERNAL_SUBNET=192.168.3.0
-ALLOWEDIPS=0.0.0.0/0
+PEERS=user1,user2,user3

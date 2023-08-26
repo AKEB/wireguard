@@ -2,12 +2,12 @@
 
 ENVFILE=$(dirname $0)/.env
 [ -f ${ENVFILE} ] || { echo "${ENVFILE} not found" ; exit 1 ; }
-. $(dirname $0)/.env
+source ${ENVFILE}
 
 
 CONF=$(dirname $0)/wireguard.conf
 [ -f $CONF ] || { echo "$CONF not found" ; exit 1 ; }
-. $(dirname $0)/wireguard.conf
+source ${CONF}
 
 
 [ $# -ge 1 ] || { echo "Usage: $0 | add [<users>] | del <users>"; exit 2 ; }
@@ -15,7 +15,7 @@ CONF=$(dirname $0)/wireguard.conf
 VARS="PEERS TELEGRAM_BOT_TOKEN TELEGRAM_USER_ID DOCKER_COMPOSE_FILE TZ SERVERURL SERVERPORT INTERNAL_SUBNET ALLOWEDIPS"
 for VAR in $VARS ; do if [ "${!VAR:-undefined}" = "undefined" ] ; then echo "$VAR is empty or undefined "; exit ; fi ; done
 
-DOCKER_COMPOSE="docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${PWD}/wireguard.conf "
+DOCKER_COMPOSE="source ${ENVFILE} && source ${CONF} && docker-compose -f ${DOCKER_COMPOSE_FILE} "
 
 CMD=$1
 shift
@@ -80,7 +80,7 @@ function add_users() {
         done ;
         PEERS=($(echo "${PEERS}" | tr ',' '\n' | sort -u | tr '\n' ','))
         PEERS=${PEERS::(${#PEERS}-1)}
-        echo "PEERS=${PEERS}" > .env
+        echo "PEERS=${PEERS}" > ${CONF}
 
         ${DOCKER_COMPOSE} up -d --force-recreate
         sleep 5;
@@ -108,7 +108,7 @@ function del_users() {
             fi
         done
         PEERS=${PEERS:1:(${#PEERS})}
-        echo "PEERS=${PEERS}" > .env
+        echo "PEERS=${PEERS}" > ${CONF}
         ${DOCKER_COMPOSE} up -d --force-recreate
     else echo "USE del <user1> <user2> <user3>" ;
     fi
