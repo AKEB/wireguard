@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 import os
 import glob
 import subprocess
+import configparser
 
 load_dotenv(".env")
 
@@ -124,7 +125,12 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return await update.message.reply_text("You don't have permissions")
     users = glob.glob('./config/peer_*')
     users = [sub.replace('./config/peer_', '') for sub in users]
-    await update.message.reply_text("\n".join(users))
+    another_config = configparser.ConfigParser()
+    response = ""
+    for user in users:
+        another_config.read('./config/peer_' + user + '/peer_' + user + '.conf')
+        response = response + user + " " + another_config['Interface']['Address'] + "\n"
+    await update.message.reply_text(response)
 
 
 def main() -> None:

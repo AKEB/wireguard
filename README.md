@@ -21,9 +21,12 @@
 ## Install Bot
 
 ```bash
-python3 -m venv venv
+apt update && apt install -y python3.9 python3.9-venv
+python3.9 -m venv venv
 source ./venv/bin/activate
 pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org python-telegram-bot python-dotenv
+deactivate
 
-nohup python bot.py &
+./start_bot.sh
+
 ```
