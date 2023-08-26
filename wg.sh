@@ -15,7 +15,7 @@ source ${CONF}
 VARS="PEERS TELEGRAM_BOT_TOKEN TELEGRAM_USER_ID DOCKER_COMPOSE_FILE TZ SERVERURL SERVERPORT INTERNAL_SUBNET ALLOWEDIPS"
 for VAR in $VARS ; do if [ "${!VAR:-undefined}" = "undefined" ] ; then echo "$VAR is empty or undefined "; exit ; fi ; done
 
-DOCKER_COMPOSE="source ${ENVFILE} && source ${CONF} && docker-compose -f ${DOCKER_COMPOSE_FILE} "
+DOCKER_COMPOSE="docker-compose -f ${DOCKER_COMPOSE_FILE} "
 
 CMD=$1
 shift
