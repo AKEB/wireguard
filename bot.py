@@ -11,6 +11,7 @@ import logging
 from telegram import __version__ as TG_VER
 from dotenv import load_dotenv
 import os
+import glob
 import subprocess
 
 load_dotenv(".env")
@@ -117,6 +118,15 @@ async def stat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(result.stdout.decode('utf-8'))
 
 
+async def users(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ """
+    if str(update.effective_chat.id) != str(ADMIN_TELEGRAM_ID):
+        return await update.message.reply_text("You don't have permissions")
+    users = glob.glob('./config/peer_*')
+    users = [sub.replace('./config/peer_', '') for sub in users]
+    await update.message.reply_text("\n".join(users))
+
+
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
@@ -125,6 +135,7 @@ def main() -> None:
     application.add_handler(CommandHandler("add", add_users))
     application.add_handler(CommandHandler("del", del_users))
     application.add_handler(CommandHandler("stat", stat))
+    application.add_handler(CommandHandler("users", users))
     application.add_handler(CommandHandler("send", send_users))
     application.add_handler(CommandHandler("help", help_handler))
 
