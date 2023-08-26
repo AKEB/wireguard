@@ -126,8 +126,8 @@ function stop() {
 }
 
 function restart() {
-    echo "Restarting WireGuard"
-    ${DOCKER_COMPOSE} down && ${DOCKER_COMPOSE} up -d --force-recreate
+    stop
+    start
 }
 
 function logs() {

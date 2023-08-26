@@ -1,3 +1,4 @@
 .env
 wireguard.conf
-config/*
+/config/*
+/venv/
