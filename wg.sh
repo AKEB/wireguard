@@ -135,7 +135,7 @@ function logs() {
 }
 
 function stat() {
-    ${DOCKER_COMPOSE} exec wireguard wg show
+    ${DOCKER_COMPOSE} exec -t wireguard wg show
 }
 
 

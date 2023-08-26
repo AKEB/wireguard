@@ -114,7 +114,7 @@ async def stat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ """
     if str(update.effective_chat.id) != str(ADMIN_TELEGRAM_ID):
         return await update.message.reply_text("You don't have permissions")
-    result = subprocess.Popen(['./wg.sh', 'stat'], stdout=subprocess.PIPE)
+    result = subprocess.Popen(['./wg.sh', 'stat'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     await update.message.reply_text(result.communicate()[0].decode('utf-8'))
 
 
